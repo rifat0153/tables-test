@@ -1,9 +1,14 @@
 <script setup lang="ts">
-const items = generateDummyObjects(150);
+// const items = generateDummyObjects(150);
+const data = ref<LocationMapping[]>([]);
+
+const generate = (count: number) => {
+  data.value = generateDummyObjects(count);
+};
 
 const { changedItemsCount, columns, rows, updateCellValue } =
   useTable<LocationMapping>(
-    items,
+    data,
     "locationId",
     "locationName",
     "triggerId",
@@ -14,6 +19,12 @@ const { changedItemsCount, columns, rows, updateCellValue } =
 
 <template>
   <p>Changed items: {{ changedItemsCount }}</p>
+
+  <button @click="generate(10)" class="btn btn-primary">Generate 10</button>
+
+  <button @click="generate(100)" class="btn btn-primary">Generate 100</button>
+
+  <button @click="generate(1000)" class="btn btn-primary">Generate 1000</button>
 
   <table>
     <thead>

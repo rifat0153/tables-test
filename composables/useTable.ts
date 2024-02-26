@@ -36,6 +36,10 @@ export const useTable = <T extends MappingItem>(
 
   const items = toRef(_items) as Ref<T[]>;
 
+  watch(items, () => {
+    generateTable();
+  });
+
   const columns = ref<string[]>([]);
   const rows = ref<Cell[][]>([]);
 
@@ -53,7 +57,7 @@ export const useTable = <T extends MappingItem>(
 
     columns.value = Array.from(uniqueColumns).map((id) => `Column ${id}`);
 
-    const rowArr = Array.from(uniqueRows);
+    rows.value = [];
 
     for (let i = 0; i < r.length; i++) {
       const row: Cell[] = [];
@@ -87,8 +91,6 @@ export const useTable = <T extends MappingItem>(
     }
     cell.originalValue = cell.value;
   }
-
-  generateTable();
 
   return {
     columns,
