@@ -1,7 +1,9 @@
 export type Cell = {
   id: string;
   columnIndex: number;
+  columnId: number;
   rowIndex: number;
+  rowId: number;
   value: boolean;
   originalValue: boolean;
 };
@@ -89,12 +91,16 @@ export const useTable = <T extends MappingItem>(
 
     for (let i = 0; i < rows.value.length; i++) {
       const row = rows.value[i];
+
       for (let j = 0; j < columns.value.length; j++) {
         const column = columns.value[j];
+
         const cell: Cell = {
           id: `${row.id}-${column.id}`,
           rowIndex: i,
+          rowId: row.id,
           columnIndex: j,
+          columnId: column.id,
           value: false,
           originalValue: false,
         };

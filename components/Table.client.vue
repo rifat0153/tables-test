@@ -15,6 +15,36 @@ const { changedItemsCount, columns, rows, updateCellValue } =
     "triggerName",
     "mappingId"
   );
+
+const rowFilter = ref("");
+const colFilter = ref("");
+
+const filteredRows = computed(() => {
+  let filtered = rows.value.filter((row) => row.name.includes(rowFilter.value));
+
+  // filter the cells
+  filtered = filtered.map((row) => {
+    return {
+      ...row,
+      cells:
+        colFilter.value === ""
+          ? row.cells
+          : row.cells.filter((cell) =>
+              filteredColumns.value.find(
+                (column) => column.id === cell.columnId
+              )
+            ),
+    };
+  });
+
+  return filtered;
+});
+
+const filteredColumns = computed(() => {
+  return columns.value.filter((column) =>
+    column.name.includes(colFilter.value)
+  );
+});
 </script>
 
 <template>
@@ -26,17 +56,20 @@ const { changedItemsCount, columns, rows, updateCellValue } =
 
   <button @click="generate(300)" class="btn btn-primary">Generate 300</button>
 
+  <input v-model="rowFilter" placeholder="Filter rows" />
+  <input v-model="colFilter" placeholder="Filter columns" />
+
   <table>
     <thead>
       <tr>
         <th>Table Name</th>
-        <th v-for="(column, index) in columns" :key="index">
+        <th v-for="(column, index) in filteredColumns" :key="index">
           {{ column.id }}
         </th>
       </tr>
     </thead>
     <tbody>
-      <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
+      <tr v-for="(row, rowIndex) in filteredRows" :key="rowIndex">
         <td>
           {{ row.name }}
         </td>
