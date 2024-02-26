@@ -6,6 +6,17 @@ export type Cell = {
   originalValue: boolean;
 };
 
+export type MappingRow = {
+  id: number;
+  name: string;
+  cells: Cell[];
+};
+
+export type MappingColumn = {
+  id: number;
+  name: string;
+};
+
 export type MappingItem = {
   triggerId: number;
   triggerName: string;
@@ -40,8 +51,8 @@ export const useTable = <T extends MappingItem>(
     generateTable();
   });
 
-  const columns = ref<string[]>([]);
-  const rows = ref<Cell[][]>([]);
+  const columns = ref<MappingColumn[]>([]);
+  const rows = ref<MappingRow[]>([]);
 
   function generateTable() {
     changedItemsCount.value = 0;
@@ -49,41 +60,51 @@ export const useTable = <T extends MappingItem>(
     const uniqueColumns = new Set<number>();
     const uniqueRows = new Set<number>();
 
+    // rest the rows and columns
+    rows.value = [];
+    columns.value = [];
+
     items.value.forEach((item) => {
-      uniqueColumns.add(item[columnIdField] as number);
-      uniqueRows.add(item[rowIdField] as number);
+      if (!uniqueColumns.has(item[columnIdField] as number)) {
+        const column: MappingColumn = {
+          id: item[columnIdField] as number,
+          name: item[columnNameField] as string,
+        };
+        columns.value.push(column);
+      } else {
+        uniqueColumns.add(item[columnIdField] as number);
+      }
+
+      if (!uniqueRows.has(item[rowIdField] as number)) {
+        const row: MappingRow = {
+          id: item[rowIdField] as number,
+          name: item[rowNameField] as string,
+          cells: [],
+        };
+        rows.value.push(row);
+      } else {
+        uniqueRows.add(item[rowIdField] as number);
+      }
     });
 
-    const r = [...uniqueRows];
-    const c = [...uniqueColumns];
-
-    columns.value = Array.from(uniqueColumns).map((id) => `Column ${id}`);
-
-    rows.value = [];
-
-    for (let i = 0; i < r.length; i++) {
-      const row: Cell[] = [];
-
-      const rowId = r[i];
-
-      for (let j = 0; j < c.length; j++) {
-        const columnId = c[j];
-
+    for (let i = 0; i < rows.value.length; i++) {
+      const row = rows.value[i];
+      for (let j = 0; j < columns.value.length; j++) {
+        const column = columns.value[j];
         const cell: Cell = {
-          id: `${rowId}-${columnId}`,
+          id: `${row.id}-${column.id}`,
           rowIndex: i,
           columnIndex: j,
           value: false,
           originalValue: false,
         };
-        row.push(cell);
+        row.cells.push(cell);
       }
-      rows.value.push(row);
     }
   }
 
   function updateCellValue(_cell: Cell) {
-    const cell = rows.value[_cell.rowIndex][_cell.columnIndex];
+    const cell = rows.value[_cell.rowIndex].cells[_cell.columnIndex];
 
     if (cell.value !== cell.originalValue) {
       if (cell.value) {

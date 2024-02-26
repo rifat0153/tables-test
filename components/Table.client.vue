@@ -29,12 +29,19 @@ const { changedItemsCount, columns, rows, updateCellValue } =
   <table>
     <thead>
       <tr>
-        <th v-for="(column, index) in columns" :key="index">{{ column }}</th>
+        <th>Table Name</th>
+        <th v-for="(column, index) in columns" :key="index">
+          {{ column.id }}
+        </th>
       </tr>
     </thead>
     <tbody>
       <tr v-for="(row, rowIndex) in rows" :key="rowIndex">
-        <td v-for="(cell, cellIndex) in row" :key="cellIndex">
+        <td>
+          {{ row.name }}
+        </td>
+
+        <td v-for="(cell, cellIndex) in row.cells" :key="cellIndex">
           <input
             type="checkbox"
             v-model="cell.value"
