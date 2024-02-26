@@ -4,6 +4,7 @@ export default defineNuxtConfig({
   components: true,
   pages: true,
   typescript: {
+    strict: true,
     shim: false,
   },
 });

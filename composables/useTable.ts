@@ -1,7 +1,7 @@
 export type Cell = {
   id: string;
-  columnId: number;
-  rowId: number;
+  columnIndex: number;
+  rowIndex: number;
   value: boolean;
   originalValue: boolean;
 };
@@ -44,6 +44,8 @@ export const useTable = <T extends MappingItem>(
   const rows = ref<Cell[][]>([]);
 
   function generateTable() {
+    changedItemsCount.value = 0;
+
     const uniqueColumns = new Set<number>();
     const uniqueRows = new Set<number>();
 
@@ -69,8 +71,8 @@ export const useTable = <T extends MappingItem>(
 
         const cell: Cell = {
           id: `${rowId}-${columnId}`,
-          rowId: rowId,
-          columnId: columnId,
+          rowIndex: i,
+          columnIndex: j,
           value: false,
           originalValue: false,
         };
@@ -80,8 +82,9 @@ export const useTable = <T extends MappingItem>(
     }
   }
 
-  function updateCellValue(rowIndex: number, columnIndex: number) {
-    const cell = rows.value[rowIndex][columnIndex];
+  function updateCellValue(_cell: Cell) {
+    const cell = rows.value[_cell.rowIndex][_cell.columnIndex];
+
     if (cell.value !== cell.originalValue) {
       if (cell.value) {
         changedItemsCount.value++;

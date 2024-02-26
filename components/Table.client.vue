@@ -24,7 +24,7 @@ const { changedItemsCount, columns, rows, updateCellValue } =
 
   <button @click="generate(100)" class="btn btn-primary">Generate 100</button>
 
-  <button @click="generate(1000)" class="btn btn-primary">Generate 1000</button>
+  <button @click="generate(300)" class="btn btn-primary">Generate 300</button>
 
   <table>
     <thead>
@@ -38,7 +38,7 @@ const { changedItemsCount, columns, rows, updateCellValue } =
           <input
             type="checkbox"
             v-model="cell.value"
-            @change="updateCellValue(rowIndex, cellIndex)"
+            @change="updateCellValue(cell)"
           />
         </td>
       </tr>
